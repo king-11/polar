@@ -26,6 +26,7 @@ export interface Network {
   status: Status;
   path: string;
   autoMineMode: AutoMineMode;
+  externalNetworkName?: string;
   nodes: {
     bitcoin: BitcoinNode[];
     lightning: LightningNode[];
@@ -136,6 +137,8 @@ export interface DockerLibrary {
   saveNetworks: (networks: NetworksFile) => Promise<void>;
   loadNetworks: () => Promise<NetworksFile>;
   renameNodeDir: (network: Network, node: AnyNode, newName: string) => Promise<void>;
+  createDockerExternalNetwork: (name: string) => Promise<void>;
+  getDockerExternalNetworks: () => Promise<string[]>;
 }
 
 export interface RepoServiceInjection {

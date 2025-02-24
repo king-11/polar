@@ -29,11 +29,19 @@ export interface ComposeService {
   stop_grace_period?: string;
 }
 
+export interface ComposeExternalNetwork {
+  default: {
+    external: true;
+    name: string;
+  };
+}
+
 export interface ComposeContent {
   name: string;
   services: {
     [key: string]: ComposeService;
   };
+  networks?: ComposeExternalNetwork;
 }
 
 class ComposeFile {
@@ -43,6 +51,16 @@ class ComposeFile {
     this.content = {
       name: `polar-network-${id}`,
       services: {},
+    };
+  }
+
+  setExternalNetworkName(name?: string) {
+    if (!name) return;
+    this.content.networks = {
+      default: {
+        external: true,
+        name: name,
+      },
     };
   }
 

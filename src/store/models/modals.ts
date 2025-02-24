@@ -76,6 +76,11 @@ interface SendAssetModel {
   lndName?: string;
 }
 
+interface DockerNetworkModel {
+  visible: boolean;
+  networkName?: string;
+}
+
 interface ChangeTapBackendModel {
   visible: boolean;
   tapName?: string;
@@ -122,6 +127,7 @@ export interface ModalsModel {
   lncSessionInfo: LncSessionInfoModel;
   addLncSession: AddLncSessionModel;
   changeTapBackend: ChangeTapBackendModel;
+  dockerNetwork: DockerNetworkModel;
   setOpenChannel: Action<ModalsModel, OpenChannelModel>;
   showOpenChannel: Thunk<ModalsModel, Partial<OpenChannelModel>, StoreInjections>;
   hideOpenChannel: Thunk<ModalsModel, void, StoreInjections, RootModel>;
@@ -176,6 +182,9 @@ export interface ModalsModel {
   setAddLncSession: Action<ModalsModel, AddLncSessionModel>;
   showAddLncSession: Thunk<ModalsModel, Partial<AddLncSessionModel>, StoreInjections>;
   hideAddLncSession: Thunk<ModalsModel, void, StoreInjections, RootModel>;
+  setDockerNetwork: Action<ModalsModel, DockerNetworkModel>;
+  showDockerNetwork: Thunk<ModalsModel, Partial<DockerNetworkModel>, StoreInjections>;
+  hideDockerNetwork: Thunk<ModalsModel>;
 }
 
 const modalsModel: ModalsModel = {
@@ -191,6 +200,7 @@ const modalsModel: ModalsModel = {
   imageUpdates: { visible: false },
   sendOnChain: { visible: false },
   assetInfo: { visible: false },
+  dockerNetwork: { visible: false },
   changeTapBackend: { visible: false },
   renameNode: { visible: false },
   lncSessionInfo: { visible: false },
@@ -469,6 +479,18 @@ const modalsModel: ModalsModel = {
       visible: false,
       nodeName: undefined,
     });
+  }),
+  setDockerNetwork: action((state, payload) => {
+    state.dockerNetwork = {
+      ...state.dockerNetwork,
+      ...payload,
+    };
+  }),
+  showDockerNetwork: thunk((actions, { networkName }) => {
+    actions.setDockerNetwork({ visible: true, networkName });
+  }),
+  hideDockerNetwork: thunk(actions => {
+    actions.setDockerNetwork({ visible: false });
   }),
 };
 

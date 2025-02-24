@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAsyncCallback } from 'react-async-hook';
 import { info } from 'electron-log';
 import styled from '@emotion/styled';
@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   Col,
+  Collapse,
   Divider,
   Form,
   Input,
@@ -20,6 +21,7 @@ import { ThemeColors } from 'theme/colors';
 import { dockerConfigs } from 'utils/constants';
 import { isWindows } from 'utils/system';
 import { HOME } from 'components/routing';
+import DockerNetworkName from 'components/common/DockerNetworkName';
 
 const Styled = {
   PageHeader: styled(PageHeader)<{ colors: ThemeColors['pageHeader'] }>`
@@ -46,6 +48,8 @@ const NewNetwork: React.FC = () => {
   const { addNetwork } = useStoreActions(s => s.network);
   const { settings } = useStoreState(s => s.app);
   const { custom: customNodes } = settings.nodeImages;
+
+  const [isDockerNetworkNameValid, setIsDockerNetworkNameValid] = useState<boolean>(true);
 
   const createAsync = useAsyncCallback(async (values: any) => {
     try {
@@ -86,16 +90,19 @@ const NewNetwork: React.FC = () => {
             tapdNodes: settings.newNodeCounts.tapd,
             litdNodes: settings.newNodeCounts.litd,
             customNodes: initialCustomValues,
+            externalNetwork: '',
           }}
           onFinish={createAsync.execute}
         >
-          <Form.Item
-            name="name"
-            label={l('nameLabel')}
-            rules={[{ required: true, message: l('cmps.forms.required') }]}
-          >
-            <Input placeholder={l('namePhldr')} />
-          </Form.Item>
+          <Col>
+            <Form.Item
+              name="name"
+              label={l('nameLabel')}
+              rules={[{ required: true, message: l('cmps.forms.required') }]}
+            >
+              <Input placeholder={l('namePhldr')} />
+            </Form.Item>
+          </Col>
           <Form.Item
             name="description"
             label={l('descriptionLabel')}
@@ -182,7 +189,20 @@ const NewNetwork: React.FC = () => {
             </Col>
           </Row>
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={createAsync.loading}>
+            <Collapse defaultActiveKey={['0']} ghost>
+              <Collapse.Panel header="Advanced Options" key="1">
+                <DockerNetworkName
+                  name="externalNetworkName"
+                  validateCallback={setIsDockerNetworkNameValid}
+                />
+              </Collapse.Panel>
+            </Collapse>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={createAsync.loading}
+              disabled={!isDockerNetworkNameValid}
+            >
               {l('btnCreate')}
             </Button>
           </Form.Item>

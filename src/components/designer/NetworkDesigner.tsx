@@ -10,6 +10,7 @@ import { Network } from 'types';
 import { Loader, RenameNodeModal } from 'components/common';
 import AdvancedOptionsModal from 'components/common/AdvancedOptionsModal';
 import SendOnChainModal from './bitcoin/actions/SendOnChainModal';
+import DockerNetworkModal from 'components/network/DockerNetworkModal';
 import { Link, NodeInner, Port, Ports } from './custom';
 import { CanvasOuterDark, CanvasOuterLight } from './custom/CanvasOuter';
 import {
@@ -65,6 +66,7 @@ const NetworkDesigner: React.FC<Props> = ({ network, updateStateDelay = 3000 }) 
     changeTapBackend,
     renameNode,
     addLncSession,
+    dockerNetwork,
   } = useStoreState(s => s.modals);
 
   const { save } = useStoreActions(s => s.network);
@@ -114,6 +116,7 @@ const NetworkDesigner: React.FC<Props> = ({ network, updateStateDelay = 3000 }) 
       {sendAsset.visible && <SendAssetModal network={network} />}
       {renameNode.visible && <RenameNodeModal network={network} />}
       {addLncSession.visible && <LncAddSessionModal network={network} />}
+      {dockerNetwork.visible && <DockerNetworkModal network={network} />}
     </Styled.Designer>
   );
 };

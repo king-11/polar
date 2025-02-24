@@ -2,6 +2,7 @@ import {
   CloseOutlined,
   ExportOutlined,
   FormOutlined,
+  LinkOutlined,
   MoreOutlined,
   PlayCircleOutlined,
   StopOutlined,
@@ -36,6 +37,7 @@ interface Props {
   onRenameClick: () => void;
   onDeleteClick: () => void;
   onExportClick: () => void;
+  onDockerNetworkClick: () => void;
 }
 
 const config: {
@@ -81,6 +83,7 @@ const NetworkActions: React.FC<Props> = ({
   onRenameClick,
   onDeleteClick,
   onExportClick,
+  onDockerNetworkClick,
 }) => {
   const { l } = usePrefixedTranslation('cmps.network.NetworkActions');
 
@@ -102,6 +105,9 @@ const NetworkActions: React.FC<Props> = ({
       case 'export':
         onExportClick();
         break;
+      case 'docker':
+        onDockerNetworkClick();
+        break;
       case 'delete':
         onDeleteClick();
         break;
@@ -111,6 +117,7 @@ const NetworkActions: React.FC<Props> = ({
   const items: MenuProps['items'] = [
     { key: 'rename', label: l('menuRename'), icon: <FormOutlined /> },
     { key: 'export', label: l('menuExport'), icon: <ExportOutlined /> },
+    { key: 'docker', label: l('menuDocker'), icon: <LinkOutlined /> },
     { key: 'delete', label: l('menuDelete'), icon: <CloseOutlined /> },
   ];
 
