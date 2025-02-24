@@ -440,6 +440,7 @@ export const createNetwork = (config: {
   repoState: DockerRepoState;
   managedImages: ManagedImage[];
   customImages: { image: CustomImage; count: number }[];
+  externalNetworkName?: string;
   status?: Status;
   basePorts?: NodeBasePorts;
 }): Network => {
@@ -457,6 +458,7 @@ export const createNetwork = (config: {
     managedImages,
     customImages,
     basePorts,
+    externalNetworkName,
   } = config;
   // need explicit undefined check because Status.Starting is 0
   const status = config.status !== undefined ? config.status : Status.Stopped;
@@ -473,6 +475,7 @@ export const createNetwork = (config: {
       tap: [],
     },
     autoMineMode: AutoMineMode.AutoOff,
+    externalNetworkName,
   };
 
   const { bitcoin, lightning } = network.nodes;

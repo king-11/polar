@@ -51,6 +51,7 @@ interface AddNetworkArgs {
   tapdNodes: number;
   litdNodes: number;
   customNodes: Record<string, number>;
+  externalNetworkName?: string;
 }
 
 export interface AutoMinerModel {
@@ -192,6 +193,14 @@ export interface NetworkModel {
   setAutoMineMode: Action<NetworkModel, { id: number; mode: AutoMineMode }>;
   setMiningState: Action<NetworkModel, { id: number; mining: boolean }>;
   mineBlock: Thunk<NetworkModel, { id: number }, StoreInjections, RootModel>;
+  setDockerExternalNetworkName: Thunk<
+    NetworkModel,
+    { id: number; externalNetworkName: string | undefined },
+    StoreInjections,
+    RootModel
+  >;
+  getExternalDockerNetworks: Thunk<NetworkModel, void, StoreInjections, RootModel>;
+  setExternalNetworkName: Action<NetworkModel, { id: number; name: string | undefined }>;
 }
 
 const networkModel: NetworkModel = {
@@ -285,6 +294,7 @@ const networkModel: NetworkModel = {
         repoState: dockerRepoState,
         managedImages: computedManagedImages,
         customImages,
+        externalNetworkName: payload.externalNetworkName,
         basePorts: settings.basePorts,
       });
       actions.add(network);
@@ -1074,6 +1084,30 @@ const networkModel: NetworkModel = {
       }
     },
   ),
+  setDockerExternalNetworkName: thunk(
+    async (actions, { id, externalNetworkName }, { getState, injections }) => {
+      const { networks } = getState();
+      let network = networks.find(n => n.id === id);
+      if (!network) throw new Error(l('networkByIdErr', { networkId: id }));
+      actions.setExternalNetworkName({ id, name: externalNetworkName });
+      network = getState().networks.find(n => n.id === id) as Network;
+      await actions.save();
+      await injections.dockerService.saveComposeFile(network);
+      if (network.status === Status.Started) {
+        await injections.dockerService.stop(network);
+        await injections.dockerService.start(network);
+      }
+    },
+  ),
+  getExternalDockerNetworks: thunk(async (actions, _, { injections }) => {
+    const networks = await injections.dockerService.getDockerExternalNetworks();
+    return networks;
+  }),
+  setExternalNetworkName: action((state, { id, name }) => {
+    const network = state.networks.find(n => n.id === id);
+    if (!network) throw new Error(l('networkByIdErr', { networkId: id }));
+    network.externalNetworkName = name;
+  }),
 };
 
 export default networkModel;
