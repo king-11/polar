@@ -15,7 +15,7 @@ const execCommand = {
   AttachStderr: true,
   AttachStdin: true,
   Tty: true,
-  Cmd: ['/bin/bash'],
+  Cmd: ['/bin/sh'],
 };
 
 const execOptions = {
